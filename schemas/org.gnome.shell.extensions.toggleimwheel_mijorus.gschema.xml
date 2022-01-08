@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+  <schema id="org.gnome.shell.toggleimwheel_mijorus" path="/org/gnome/shell/extensions/toggleimwheel_mijorus/">
+    <!-- See also: https://developer.gnome.org/glib/stable/gvariant-format-strings.html -->
+    <key name="mouse-value" type="n">
+      <default>4</default>
+    </key>
+    <key name="touchpad-value" type="n">
+      <default>0</default>
+    </key>
+  </schema>
+</schemalist>

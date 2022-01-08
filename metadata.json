@@ -1,0 +1,8 @@
+{
+  "name": "Toggle imwheel",
+  "description": "imwheel",
+  "uuid": "toggleimwheel@mijorus.it",
+  "shell-version": [
+    "40"
+  ]
+}
