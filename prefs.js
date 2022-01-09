@@ -5,14 +5,14 @@ const { GLib, Gio, Gtk } = imports.gi;
 const ByteArray = imports.byteArray;
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
+const utils = Me.imports.utils;
 
 
 function init() {
 }
 
 function buildPrefsWidget() {
-    const checkExists = GLib.spawn_command_line_sync('which imwheel');
-    this.imwInstalled = (ByteArray.toString(checkExists[1])).length > 0;
+    this.imwInstalled = utils.checkInstalled();
     
     // Copy the same GSettings code from `extension.js`
     this.settings = ExtensionUtils.getSettings('org.gnome.shell.toggleimwheel_mijorus'); // Gio.Settings
@@ -21,7 +21,7 @@ function buildPrefsWidget() {
     let prefsWidget = new Gtk.Box({ visible: true, orientation: 1, spacing: 6, 'margin-start': 10, 'margin-end': 10 });    
     
     const title = new Gtk.Label({
-        label: this.imwInstalled ? `<b>Preferences</b>` : `<b>Warning: imwheel was not detected. The configuration will be created but will have not effect</b>`,
+        label: this.imwInstalled ? `<b>Preferences</b>` : `<b>Warning: imwheel was not detected.</b>`,
         halign: Gtk.Align.START,
         use_markup: true,
         visible: true
@@ -29,10 +29,10 @@ function buildPrefsWidget() {
 
     const subtitle = new Gtk.Label({ 
         label: this.imwInstalled 
-            ? `Set the amount of line a that single "wheel step" should scroll` 
+            ? `Set the amount of line a that single "step" should scroll` 
             : 'The program does not seem to be installed or it was installed manually and was not added to the PATH. \nPlease consider installing it from your package manager first.', 
         halign: Gtk.Align.START, 
-        visible: true 
+        visible: true
     });
     
     prefsWidget.append(title);
@@ -53,7 +53,17 @@ function buildPrefsWidget() {
         prefList.append(prefsContainer);
     }
 
-    prefsWidget.append(prefList);
+    if (this.imwInstalled) {
+        prefsWidget.append(prefList);
+
+        const applySettingsButton = new Gtk.Button({ label: 'Apply', halign: Gtk.Align.START, 'margin-top': 10 });
+        applySettingsButton.get_style_context().add_class('suggested-action');
+        applySettingsButton.connect('clicked', function() {
+            utils.setServiceMode(`${settings.get_string('current-mode')}-value`);
+        });
+
+        prefsWidget.append(applySettingsButton);
+    }
 
 
     // Return our widget which will be added to the window
