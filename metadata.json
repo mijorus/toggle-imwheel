@@ -1,9 +1,11 @@
 {
-  "name": "Toggle imwheel",
-  "description": "This simple extension wants to mitigate the lack of a dedicated mouse wheel control on most of the modern linux distributions. Many are using imwheel as a temporary fix; however, if you are using a laptop, you might want to have two different settings for the touchpad and the mouse. \n This extension will add an icon in the top bar which lets you toggle imwheel between two custom settings. \n https://github.com/mijorus/toggle-imwheel",
-  "uuid": "toggleimwheel@mijorus.it",
-  "version": 2,
-  "shell-version": [
-    "40"
-  ]
+    "name": "Toggle imwheel",
+    "description": "This simple extension wants to mitigate the lack of a dedicated mouse wheel control on most of the modern linux distributions. Many are using imwheel as a temporary fix; however, if you are using a laptop, you might want to have two different settings for the touchpad and the mouse. \n This extension will add an icon in the top bar which lets you toggle imwheel between two custom settings. \n https://github.com/mijorus/toggle-imwheel",
+    "uuid": "toggleimwheel@mijorus.it",
+    "version": 2,
+    "shell-version": [
+        "40",
+        "41",
+        "42"
+    ]
 }
