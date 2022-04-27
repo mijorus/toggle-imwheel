@@ -32,7 +32,8 @@ function buildPrefsWidget() {
             ? `Set the amount of line a that single "step" should scroll` 
             : 'The program does not seem to be installed or it was installed manually and was not added to the PATH. \nPlease consider installing it from your package manager first.', 
         halign: Gtk.Align.START, 
-        visible: true
+        visible: true,
+        hexpand: true
     });
     
     prefsWidget.append(title);
@@ -40,7 +41,7 @@ function buildPrefsWidget() {
 
     let prefList = new Gtk.ListBox({ visible: true, 'selection_mode': 0 });
     for (const [key, value] of Object.entries({'mouse-value': 'Mouse mode', 'touchpad-value': 'Touchpad mode'})) {
-        let prefsContainer = new Gtk.Box({ visible: true, orientation: 0, spacing: 20, 'margin-start': 10 });
+        let prefsContainer = new Gtk.Box({ visible: true, orientation: 0, spacing: 20, 'margin-start': 10, 'margin-end': 10 });
     
         let toggleLabel = new Gtk.Label({ label: value, halign: Gtk.Align.START, visible: true });
         prefsContainer.append(toggleLabel);

@@ -33,45 +33,45 @@ const Main = imports.ui.main;
 const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
 const utils = Me.imports.utils;
-const settings = ExtensionUtils.getSettings('org.gnome.shell.toggleimwheel_mijorus');
 
 const Indicator = GObject.registerClass(
-class Indicator extends PanelMenu.Button {
-    _init() {
-        super._init(0.0, _('Toggle imwheel settings'));
+    class Indicator extends PanelMenu.Button {
+        _init(settings) {
+            super._init(0.0, _('Toggle imwheel settings'));
 
-        this.imwInstalled = utils.checkInstalled();
-        this.getIconName = () => {
-            if (!this.imwInstalled) {
-                return 'dialog-error-symbolic';
-            }
+            this.imwInstalled = utils.checkInstalled();
+            this.getIconName = () => {
+                if (!this.imwInstalled) {
+                    return 'dialog-error-symbolic';
+                }
+                
+                return settings.get_string('current-mode') === 'touchpad' ? 'touchpad-enabled-symbolic' : 'input-mouse-symbolic'
+            };
+
+            this.icon = new St.Icon({
+                icon_name: this.getIconName(),
+                style_class: 'system-status-icon',
+            });
+
+            this.add_child(this.icon);
             
-            return settings.get_string('current-mode') === 'touchpad' ? 'touchpad-enabled-symbolic' : 'input-mouse-symbolic'
-        };
+            this.toggleModes = () => {
+                settings.set_string('current-mode', (settings.get_string('current-mode') === 'touchpad' ? 'mouse' : 'touchpad'));
+                const success = utils.setServiceMode(`${settings.get_string('current-mode')}-value`);
 
-        this.icon = new St.Icon({
-            icon_name: this.getIconName(),
-            style_class: 'system-status-icon',
-        });
-
-        this.add_child(this.icon);
-        
-        this.toggleModes = () => {
-            settings.set_string('current-mode', (settings.get_string('current-mode') === 'touchpad' ? 'mouse' : 'touchpad'));
-            const success = utils.setServiceMode(`${settings.get_string('current-mode')}-value`);
-
-            if (success) {
-                this.icon.set_icon_name(this.getIconName());
-            } else {
-                this.icon.set_icon_name('dialog-warning-symbolic');
+                if (success) {
+                    this.icon.set_icon_name(this.getIconName());
+                } else {
+                    this.icon.set_icon_name('dialog-warning-symbolic');
+                }
             }
-        }
 
-        if (this.imwInstalled) {
-            this.connect('button-press-event', this.toggleModes);
+            if (this.imwInstalled) {
+                this.connect('button-press-event', this.toggleModes);
+            }
         }
     }
-});
+);
 
 class Extension {
     constructor(uuid) {
@@ -81,17 +81,14 @@ class Extension {
     }
     
     enable() {
-        log(`enabling ${Me.metadata.name}`);
         this.imwInstalled = utils.checkInstalled();
-        log(`imwheel is ${this.imwInstalled ? '' : 'not '}installed.`);
         
         const confFile = Gio.File.parse_name('~/.imwheelrc');
         this.confExists = confFile.query_exists(null);
         
-        log(`imwheel configuration was${this.confExists ? '' : ' not'} found.`);
         this.settings = ExtensionUtils.getSettings('org.gnome.shell.toggleimwheel_mijorus');
         
-        this._indicator = new Indicator();
+        this._indicator = new Indicator(this.settings);
         Main.panel.addToStatusArea(this._uuid, this._indicator);
     }
 

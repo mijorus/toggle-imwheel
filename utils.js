@@ -18,7 +18,6 @@ function setServiceMode(valueKey) {
     const [success, tag] = confFile.replace_contents(text, null, false,  Gio.FileCreateFlags.REPLACE_DESTINATION, null);
 
     if (success) {
-        log(`restarting imwheel service with value: ${valueKey}` );
         GLib.spawn_command_line_async('imwheel -kill -b "4 5"');
     }
 
