@@ -57,7 +57,7 @@ const Indicator = GObject.registerClass(
             
             this.toggleModes = () => {
                 settings.set_string('current-mode', (settings.get_string('current-mode') === 'touchpad' ? 'mouse' : 'touchpad'));
-                utils.setServiceMode(settings.get_int(`${settings.get_string('current-mode')}-value`));
+                const success = utils.setServiceMode(settings.get_int(`${settings.get_string('current-mode')}-value`));
 
                 if (success) {
                     this.icon.set_icon_name(this.getIconName());
