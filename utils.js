@@ -3,15 +3,13 @@
 const { GLib, Gio } = imports.gi;
 const ByteArray = imports.byteArray;
 const ExtensionUtils = imports.misc.extensionUtils;
-const settings = ExtensionUtils.getSettings('org.gnome.shell.toggleimwheel_mijorus');
 
 /**
  * 
- * @param {string} valueKey 
+ * @param {string} value
  * @returns {boolean}
  */
-function setServiceMode(valueKey) {
-    const value = settings.get_int(valueKey);
+function setServiceMode(value) {
     const confFile = Gio.File.parse_name('~/.imwheelrc');
 
     const text = `".*"\nNone,      Up,   Button4, ${value}\nNone,      Down, Button5, ${value}\nControl_L, Up,   Control_L|Button4\nControl_L, Down, Control_L|Button5\nShift_L,   Up,   Shift_L|Button4\nShift_L,   Down, Shift_L|Button5`;
