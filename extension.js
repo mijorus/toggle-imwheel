@@ -44,8 +44,8 @@ const Indicator = GObject.registerClass(
                 if (!this.imwInstalled) {
                     return 'dialog-error-symbolic';
                 }
-                
-                return settings.get_string('current-mode') === 'touchpad' ? 'touchpad-enabled-symbolic' : 'input-mouse-symbolic'
+
+                return settings.get_string('current-mode') === 'touchpad' ? 'input-touchpad-symbolic' : 'input-mouse-symbolic'
             };
 
             this.icon = new St.Icon({
@@ -54,7 +54,7 @@ const Indicator = GObject.registerClass(
             });
 
             this.add_child(this.icon);
-            
+
             this.toggleModes = () => {
                 settings.set_string('current-mode', (settings.get_string('current-mode') === 'touchpad' ? 'mouse' : 'touchpad'));
                 const success = utils.setServiceMode(settings.get_int(`${settings.get_string('current-mode')}-value`));
@@ -76,18 +76,18 @@ const Indicator = GObject.registerClass(
 class Extension {
     constructor(uuid) {
         this._uuid = uuid;
-        
+
         ExtensionUtils.initTranslations(GETTEXT_DOMAIN);
     }
-    
+
     enable() {
         this.imwInstalled = utils.checkInstalled();
-        
+
         const confFile = Gio.File.parse_name('~/.imwheelrc');
         this.confExists = confFile.query_exists(null);
-        
+
         this.settings = ExtensionUtils.getSettings('org.gnome.shell.toggleimwheel_mijorus');
-        
+
         this._indicator = new Indicator(this.settings);
         Main.panel.addToStatusArea(this._uuid, this._indicator);
     }
