@@ -16,23 +16,45 @@ function setServiceMode(value) {
     const [success, tag] = confFile.replace_contents(text, null, false,  Gio.FileCreateFlags.REPLACE_DESTINATION, null);
 
     if (success) {
-        GLib.spawn_command_line_async('imwheel -kill -b "4 5"');
+        exec(['imwheel', '-kill', '-b', '"4 5"'], function(result, err) {
+            if (err) {
+                exec(['imwheel', '-kill'], function(fallbackResult, fallbackErr) {
+                    if (fallbackErr) {
+                        logError(fallbackErr)
+                    }
+                });
+            }
+        });
     }
 
     return success;
 }
 
-function exec(command) {
-    const output = GLib.spawn_command_line_sync(command);
-    return {
-        ok: output[0],
-        standard_output: ByteArray.toString(output[1]),
-        standard_error: ByteArray.toString(output[2]),
-        exit_status: output[3]
+/**
+ * 
+ * @param {strings[]} command 
+ * @param {(result, error) => void} callback 
+ */
+function exec(command, callback) {
+    try {
+        let proc = Gio.Subprocess.new(command, Gio.SubprocessFlags.NONE);
+    
+        proc.wait_check_async(null, (proc, result) => {
+            try {
+                if (proc.wait_check_finish(result)) {
+                    callback(result, null);
+                } else {
+                    callback(null, 'the process failed');
+                }
+            } catch (e) {
+                callback(null, e);
+            }
+        });
+    } catch (e) {
+        callback(null, e);
     }
 }
 
 function checkInstalled() {
-    const checkExists = exec('which imwheel');
-    return checkExists.standard_output.length > 0;
+    return (GLib.find_program_in_path('imwheel') !== null);
 }
